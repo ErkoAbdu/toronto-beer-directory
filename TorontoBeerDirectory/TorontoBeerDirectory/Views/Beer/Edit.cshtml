@@ -1,0 +1,42 @@
+﻿@model TorontoBeerDirectory.Models.BeerDto
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit Beer</h2>
+
+<form method="POST" action="/Beer/Update/@Model.BeerID">
+    <input type="text" style="display:none;" name="BeerID" value="@Model.BeerID" />
+    <div>
+        <label>Beer Name:</label>
+        <input type="text" name="BeerName" value="@Model.BeerName" />
+    </div>
+    <div>
+        <label>Brewery Name:</label>
+        <input type="text" name="BreweryName" value="@Model.BreweryName" />
+    </div>
+    <div>
+        <label>Beer Type:</label>
+        <input type="text" name="BeerType" value="@Model.BeerType" />
+    </div>
+    <div>
+        <label>Description:</label>
+        <input type="text" name="BeerDescription" value="@Model.BeerDescription" />
+    </div>
+    <div>
+        <label>Alcohol Content:</label>
+        <input type="text" name="BeerAlcoholContent" value="@Model.BeerAlcoholContent" />
+    </div>
+    <div>
+        <label>Brewery ID:</label>
+        <input type="number" name="BreweryID" value="@Model.BreweryID" />
+    </div>
+    <div>
+        <input type="submit" value="Update" />
+    </div>
+    <a style="color:#ab2020;" href="/Beer/Details/@Model.BeerID">Cancel</a>   
+
+</form>
+
+
+

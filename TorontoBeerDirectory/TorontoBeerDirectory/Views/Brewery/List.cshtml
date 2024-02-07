@@ -1,0 +1,14 @@
+﻿@model IEnumerable<TorontoBeerDirectory.Models.Brewery>
+@{
+    ViewBag.Title = "List";
+}
+
+<h2>List</h2>
+<div>
+    <a href="/Brewery/New">Add a Brewery</a>
+</div>
+@foreach (var brewery in Model)
+{
+    <a href="/Brewery/Details/@brewery.BreweryID"><h2>@brewery.BreweryName</h2></a>
+    <div>@brewery.BreweryLocation</div>
+}

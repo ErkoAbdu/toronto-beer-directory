@@ -1,0 +1,14 @@
+﻿@model TorontoBeerDirectory.Models.BeerDto
+@{
+    ViewBag.Title = "View";
+}
+
+<a href="/Beer/List">Go back to list</a>
+<a href="/Beer/Edit/@Model.BeerID">Update</a>
+<a style="color:#ab2020;" href="/Beer/DeleteConfirm/@Model.BeerID">Delete</a>
+
+<h2>@Model.BeerName</h2>
+<div>Brewery: @Model.BreweryName</div>
+<div>Beer Type: @Model.BeerType</div>
+<div>Beer Description: @Model.BeerDescription</div>
+<div>Alcohol Content: @Model.BeerAlcoholContent</div>
