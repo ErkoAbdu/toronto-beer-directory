@@ -6,8 +6,10 @@ using System.Web;
 using System.Web.Mvc;
 using System.Diagnostics;
 using TorontoBeerDirectory.Models;
+using TorontoBeerDirectory.Models.ViewModels;
 using System.Web.Script.Serialization;
 using TorontoBeerDirectory.Migrations;
+using System.Threading.Tasks;
 
 namespace TorontoBeerDirectory.Controllers
 {
@@ -19,7 +21,7 @@ namespace TorontoBeerDirectory.Controllers
         static BreweryController()
         {
             client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:44393/api/brewerydata/");
+            client.BaseAddress = new Uri("https://localhost:44393/api/");
         }
 
         /// <summary>
@@ -38,13 +40,13 @@ namespace TorontoBeerDirectory.Controllers
             //goal is to communicate with brewery api to retrieve a list of breweries
             //curl https://localhost:44393/api/brewerydata/listbreweries
 
-            string url = "listbreweries";
+            string url = "brewerydata/listbreweries";
             HttpResponseMessage response = client.GetAsync(url).Result;
 
             //Debug.WriteLine("The response code is ");
             //Debug.WriteLine(response.StatusCode);
 
-            IEnumerable<Brewery> breweries = response.Content.ReadAsAsync<IEnumerable<Brewery>>().Result;
+            IEnumerable<BreweryDto> breweries = response.Content.ReadAsAsync<IEnumerable<BreweryDto>>().Result;
             //Debug.WriteLine("Number of breweries recieved: ");
             //Debug.WriteLine(breweries.Count());
 
@@ -69,17 +71,28 @@ namespace TorontoBeerDirectory.Controllers
             //goal is to communicate with brewery api to retrieve one brewery
             //curl https://localhost:44393/api/brewerydata/findbrewery/
 
-            string url = "findbrewery/" + id;
+            DetailsBrewery ViewModel = new DetailsBrewery();
+
+            string url = "brewerydata/findbrewery/" + id;
             HttpResponseMessage response = client.GetAsync(url).Result;
 
             //Debug.WriteLine("The response code is ");
             //Debug.WriteLine(response.StatusCode);
 
-            Brewery selectedbrewery = response.Content.ReadAsAsync<Brewery>().Result;
+            Brewery SelectedBrewery = response.Content.ReadAsAsync<Brewery>().Result;
             //Debug.WriteLine("Number of breweries recieved: ");
 
+            ViewModel.SelectedBrewery = SelectedBrewery;
+            //present iformation about beers related to a brewery
+            // send reuest to get info about beers related to a particular brewery id
+            url = "beerdata/listbeersforbrewery/" + id;
+            response = client.GetAsync(url).Result;
+            IEnumerable<BeerDto> RelatedBeers = response.Content.ReadAsAsync<IEnumerable<BeerDto>>().Result;
 
-            return View(selectedbrewery);
+            ViewModel.RelatedBeers = RelatedBeers;
+
+
+            return View(ViewModel);
         }
 
         /// <summary>
@@ -134,7 +147,7 @@ namespace TorontoBeerDirectory.Controllers
 
             //goal: add a new brewery to our system using the API
             //curl -H "Content-Type:application/json" -d @brewery.json https://localhost:44393/api/brewerydata/addbrewery
-            string url = "addbrewery";
+            string url = "brewerydata/addbrewery";
 
             
             string jsonpayload = jss.Serialize(brewery);
@@ -169,7 +182,7 @@ namespace TorontoBeerDirectory.Controllers
         // GET: Brewery/Edit/1
         public ActionResult Edit(int id)
         {
-            string url = "findbrewery/" + id;
+            string url = "brewerydata/findbrewery/" + id;
             HttpResponseMessage response = client.GetAsync(url).Result;
             Brewery selectedbrewery = response.Content.ReadAsAsync<Brewery>().Result;
             return View(selectedbrewery);
@@ -189,16 +202,32 @@ namespace TorontoBeerDirectory.Controllers
 
         // POST: Brewery/Update/1
         [HttpPost]
-        public ActionResult Update(int id, Brewery brewery)
+        public ActionResult Update(int id, Brewery brewery, HttpPostedFileBase BreweryPic)
         {
-            string url = "updatebrewery/" + id;
+            string url = "brewerydata/updatebrewery/" + id;
             string jsonpayload = jss.Serialize(brewery);
             HttpContent content = new StringContent(jsonpayload);
             content.Headers.ContentType.MediaType = "application/json";
             HttpResponseMessage response = client.PostAsync(url, content).Result;
             Debug.WriteLine(content);
-            if (response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode && BreweryPic !=null)
             {
+                //Updaying the brewery picture as a separate request
+                Debug.WriteLine("Calling Update Image method.");
+                //Send over image data 
+                url = "BreweryData/UploadBreweryPic/" + id;
+                Debug.WriteLine("Recieved brewery picture " + BreweryPic.FileName);
+
+                MultipartFormDataContent requestcontent = new MultipartFormDataContent();
+                HttpContent imagecontent = new StreamContent(BreweryPic.InputStream);
+                requestcontent.Add(imagecontent, "BreweryPic", BreweryPic.FileName);
+                response = client.PostAsync(url, requestcontent).Result;
+
+                return RedirectToAction("List");
+            }
+            else if (response.IsSuccessStatusCode)
+            {
+                //no img upload but update still works
                 return RedirectToAction("List");
             }
             else
@@ -221,7 +250,7 @@ namespace TorontoBeerDirectory.Controllers
         // GET: Brewery/Delete/5
         public ActionResult DeleteConfirm(int id)
         {
-            string url = "findbrewery/" + id;
+            string url = "brewerydata/findbrewery/" + id;
             HttpResponseMessage response = client.GetAsync(url).Result;
             Brewery selectedbrewery = response.Content.ReadAsAsync<Brewery>().Result;
             return View(selectedbrewery);
@@ -242,7 +271,7 @@ namespace TorontoBeerDirectory.Controllers
         [HttpPost]
         public ActionResult Delete(int id)
         {
-            string url = "deletebrewery/" + id;
+            string url = "brewerydata/deletebrewery/" + id;
             HttpContent content = new StringContent("");
             content.Headers.ContentType.MediaType = "application/json";
             HttpResponseMessage response = client.PostAsync(url, content).Result;

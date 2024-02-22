@@ -12,6 +12,8 @@ namespace TorontoBeerDirectory.Models
         public int BreweryID { get; set; }
         public string BreweryName { get; set; }
         public string BreweryLocation { get; set; }
+        public bool BreweryHasPic { get; set; }
+        public string PicExtension { get; set; }
 
     }
     public class BreweryDto
@@ -19,6 +21,8 @@ namespace TorontoBeerDirectory.Models
         public int BreweryID { get; set;}
         public string BreweryName { get; set; }
         public string BreweryLocation { get; set;}
+        public bool BreweryHasPic { get; set; }
+        public string PicExtension { get; set; }
     }
 
 }

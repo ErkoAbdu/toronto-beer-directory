@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
 using TorontoBeerDirectory.Models;
@@ -93,6 +96,9 @@ namespace TorontoBeerDirectory.Controllers
             }
 
             db.Entry(brewery).State = EntityState.Modified;
+            //Pic update is handled by method UploadBreweryPic()
+            db.Entry(brewery).Property(b => b.BreweryHasPic).IsModified = false;
+            db.Entry(brewery).Property(b => b.PicExtension).IsModified = false;
 
             try
             {
@@ -111,6 +117,86 @@ namespace TorontoBeerDirectory.Controllers
             }
 
             return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        /// <summary>
+        /// Receives brewery picture data, uploads it to the webserver and updates the breweryhaspic
+        /// </summary>
+        /// <param name="id">the brewery id</param>
+        /// <returns>status code 200 if successful.</returns>
+        /// <example>
+        /// POST: api/BreweryData/UpdatebreweryPic/1
+        /// HEADER: enctype=multipart/form-data
+        /// FORM-DATA: image
+        /// </example>
+        /// Below is stackoverflow help (use when needed)
+        /// https://stackoverflow.com/questions/28369529/how-to-set-up-a-web-api-controller-for-multipart-form-data
+
+        [HttpPost]
+        public IHttpActionResult UploadBreweryPic(int id)
+        {
+            bool haspic = false;
+            string picextension;
+            if (Request.Content.IsMimeMultipartContent())
+            {
+                Debug.WriteLine("Recieved multiport form data.");
+
+                int numfiles = HttpContext.Current.Request.Files.Count;
+                Debug.WriteLine("Files Received: " + numfiles);
+
+                //Check if a file is posted
+                if (numfiles == 1 && HttpContext.Current.Request.Files[0] != null)
+                {
+                    var breweryPic = HttpContext.Current.Request.Files[0];
+                    //Check if file is empty (checks the file size)
+                    if (breweryPic.ContentLength > 0)
+                    {
+                        //establish valid file types (can be changed to other file extensions if desired)
+                        var valtypes = new[] { "jpeg", "jpg", "png" };
+                        var extension = Path.GetExtension(breweryPic.FileName).Substring(1);
+                        //CHeck the extension of the file
+                        if (valtypes.Contains(extension))
+                        {
+                            try
+                            {
+                                //file name is the id of the image
+                                string fn = id + "." + extension;
+
+                                //get a direct file path tp ~/Content/Images/Breweries/{id}.{extension}
+                                string path = Path.Combine(HttpContext.Current.Server.MapPath("~/Content/Images/Breweries/"), fn);
+
+                                //save the file
+                                breweryPic.SaveAs(path);
+
+                                //if everything is successful then we can set the following fields
+                                haspic = true;
+                                picextension = extension;
+
+                                //Update the brewery haspic and picextension fields in the database
+                                Brewery SelectedBrewery = db.Breweries.Find(id);
+                                SelectedBrewery.BreweryHasPic = haspic;
+                                SelectedBrewery.PicExtension = extension;
+                                db.Entry(SelectedBrewery).State = EntityState.Modified;
+
+                                db.SaveChanges();
+
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine("Brewery Image was not save successfully...");
+                                Debug.WriteLine("Exception: " + ex);
+                                return BadRequest();
+                            }
+                        }
+                    }
+                }
+                return Ok();
+            }
+            else
+            {
+                //not multiport form data
+                return BadRequest();
+            }
         }
 
         /// <summary>

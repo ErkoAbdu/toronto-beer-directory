@@ -1,14 +1,26 @@
-﻿@model TorontoBeerDirectory.Models.BeerDto
+﻿@model TorontoBeerDirectory.Models.ViewModels.UpdateBeer
 @{
     ViewBag.Title = "View";
 }
 
 <a href="/Beer/List">Go back to list</a>
-<a href="/Beer/Edit/@Model.BeerID">Update</a>
-<a style="color:#ab2020;" href="/Beer/DeleteConfirm/@Model.BeerID">Delete</a>
+<a href="/Beer/Edit/@Model.SelectedBeer.BeerID">Update</a>
+<a style="color:#ab2020;" href="/Beer/DeleteConfirm/@Model.SelectedBeer.BeerID">Delete</a>
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        @{
+            string imageURL = "/Content/Images/Beers/default.jpeg";
+            if (Model.SelectedBeer.BeerHasPic)
+            {
+                imageURL = "/Content/Images/Beers/" + Model.SelectedBeer.BeerID + "." + Model.SelectedBeer.PicExtension;
+            }
+        }
+        <div><img style="display:block; max-width:100%;" alt="@Model.SelectedBeer.BeerName" src="@imageURL"/></div>
+        <h2>@Model.SelectedBeer.BeerName</h2>
+        <div>Brewery: @Model.SelectedBeer.BreweryName</div>
+        <div>Beer Type: @Model.SelectedBeer.BeerType</div>
+        <div>Beer Description: @Model.SelectedBeer.BeerDescription</div>
+        <div>Alcohol Content: @Model.SelectedBeer.BeerAlcoholContent</div>
+    </div>
+</div>
 
-<h2>@Model.BeerName</h2>
-<div>Brewery: @Model.BreweryName</div>
-<div>Beer Type: @Model.BeerType</div>
-<div>Beer Description: @Model.BeerDescription</div>
-<div>Alcohol Content: @Model.BeerAlcoholContent</div>

@@ -1,11 +1,33 @@
-﻿@model TorontoBeerDirectory.Models.Brewery
+﻿@model TorontoBeerDirectory.Models.ViewModels.DetailsBrewery
 @{
     ViewBag.Title = "View";
 }
 
 <a href="/Brewery/List">Go back to list</a>
-<a href="/Brewery/Edit/@Model.BreweryID">Update</a>
-<a style="color:#ab2020;" href="/Brewery/DeleteConfirm/@Model.BreweryID">Delete</a>
+<a href="/Brewery/Edit/@Model.SelectedBrewery.BreweryID">Update</a>
+<a style="color:#ab2020;" href="/Brewery/DeleteConfirm/@Model.SelectedBrewery.BreweryID">Delete</a>
 
-<h2>@Model.BreweryName</h2>
-<div>Brewery Location: @Model.BreweryLocation</div>
+<div class="row">
+    <div class="col-md-6 col-sm-12">
+        @{
+            string imageURL = "/Content/Images/Breweries/default.jpeg";
+            if (Model.SelectedBrewery.BreweryHasPic)
+            {
+                imageURL = "/Content/Images/Breweries/" + Model.SelectedBrewery.BreweryID + "." + Model.SelectedBrewery.PicExtension;
+            }
+        }
+        <div><img style="display:block; height:100%; width:400px;" alt="@Model.SelectedBrewery.BreweryName" src="@imageURL"/></div>
+        <h2>@Model.SelectedBrewery.BreweryName</h2>
+        <div>Brewery Location: @Model.SelectedBrewery.BreweryLocation</div>
+    </div>
+</div>
+
+
+<div style="margin-top: 100px;">
+    <h3>Beers Related to this brewery</h3>
+    @foreach(var beer in Model.RelatedBeers)
+            {
+                <a href="/Beer/Details/@beer.BeerID">@beer.BeerName</a>
+            }
+
+</div>

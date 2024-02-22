@@ -5,7 +5,7 @@
 
 <h2>Edit Brewery</h2>
 
-<form method="POST" action="/Brewery/Update/@Model.BreweryID">
+<form method="POST" enctype="multipart/form-data" action="/Brewery/Update/@Model.BreweryID">
     <input type="text" style="display:none;" name="BreweryID" value="@Model.BreweryID" />
     <div>
         <label>Name:</label>
@@ -14,6 +14,9 @@
     <div>
         <label>Location:</label>
         <input type="text" name="BreweryLocation" value="@Model.BreweryLocation" />
+    </div>
+    <div class="col-md-6 col-sm-12">
+        <input type="file" name="BreweryPic"/>
     </div>
     <div>
         <input type="submit" value="Update" />

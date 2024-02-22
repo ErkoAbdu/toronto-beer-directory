@@ -6,7 +6,9 @@ using System.Web;
 using System.Web.Mvc;
 using System.Diagnostics;
 using TorontoBeerDirectory.Models;
+using TorontoBeerDirectory.Models.ViewModels;
 using System.Web.Script.Serialization;
+
 
 namespace TorontoBeerDirectory.Controllers
 {
@@ -17,7 +19,7 @@ namespace TorontoBeerDirectory.Controllers
         static BeerController()
         {
             client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:44393/api/beerdata/");
+            client.BaseAddress = new Uri("https://localhost:44393/api/");
         }
 
         /// <summary>
@@ -36,7 +38,7 @@ namespace TorontoBeerDirectory.Controllers
             //goal is to communicate with beer api to retrieve a list of beers
             //curl https://localhost:44393/api/beerdata/listbeers
 
-            string url = "listbeers";
+            string url = "beerdata/listbeers";
             HttpResponseMessage response = client.GetAsync(url).Result;
 
             //Debug.WriteLine("The response code is: ");
@@ -67,19 +69,22 @@ namespace TorontoBeerDirectory.Controllers
             //goal is to communicate with beer api to retrieve one beer
             //curl https://localhost:44393/api/beerdata/findbeer{id}
 
-            string url = "findbeer/" + id;
+            UpdateBeer ViewModel = new UpdateBeer();
+
+            string url = "beerdata/findbeer/" + id;
             HttpResponseMessage response = client.GetAsync(url).Result;
 
             //Debug.WriteLine("The response code is: ");
             //Debug.WriteLine(response.StatusCode);
 
-            BeerDto selectedbeer = response.Content.ReadAsAsync<BeerDto>().Result;
+            BeerDto SelectedBeer = response.Content.ReadAsAsync<BeerDto>().Result;
 
+            ViewModel.SelectedBeer = SelectedBeer;
             //Debug.WriteLine("Beer recieved: ");
-            //Debug.WriteLine(selectedbeer.BeerName);
-            //Debug.WriteLine(selectedbeer.BreweryName);
+            //Debug.WriteLine(SelectedBeer.BeerName);
+            //Debug.WriteLine(SelectedBeer.BreweryName);
 
-            return View(selectedbeer);
+            return View(ViewModel);
         }
         /// <summary>
         /// Displays a view if there is an error
@@ -109,7 +114,14 @@ namespace TorontoBeerDirectory.Controllers
         // GET: Beer/New
         public ActionResult New()
         {
-            return View();
+            //info about all breweries in the database
+            //GET api/brewerydata/listbreweries
+
+            string url = "brewerydata/listbreweries";
+            HttpResponseMessage response = client.GetAsync(url).Result;
+            IEnumerable<BreweryDto> BreweryOptions = response.Content.ReadAsAsync<IEnumerable<BreweryDto>>().Result;
+
+            return View(BreweryOptions);
         }
 
         /// <summary>
@@ -132,7 +144,7 @@ namespace TorontoBeerDirectory.Controllers
 
             //goal: add a new beer to our system using the API
             //curl -H "Content-Type:application/json" -d @beer.json https://localhost:44393/api/beerdata/addbeer
-            string url = "addbeer";
+            string url = "beerdata/addbeer";
 
             
             string jsonpayload = jss.Serialize(beer);
@@ -168,11 +180,23 @@ namespace TorontoBeerDirectory.Controllers
         // GET: Beer/Edit/3
         public ActionResult Edit(int id)
         {
-            string url = "findbeer/" + id;
+            UpdateBeer ViewModel = new UpdateBeer();
+
+            //the existing beer info
+            string url = "beerdata/findbeer/" + id;
             HttpResponseMessage response = client.GetAsync(url).Result;
-            BeerDto selectedbeer = response.Content.ReadAsAsync<BeerDto>().Result;
-            
-            return View(selectedbeer);
+            BeerDto SelectedBeer = response.Content.ReadAsAsync<BeerDto>().Result;
+            ViewModel.SelectedBeer = SelectedBeer;
+
+            //Need to include all breweries available when updating the beer
+            //the existing beer info
+            url = "brewerydata/listbreweries/";
+            response = client.GetAsync(url).Result;
+            IEnumerable<BreweryDto> BreweryOptions = response.Content.ReadAsAsync<IEnumerable<BreweryDto>>().Result;
+
+            ViewModel.BreweryOptions = BreweryOptions;
+
+            return View(ViewModel);
         }
 
         /// <summary>
@@ -189,16 +213,32 @@ namespace TorontoBeerDirectory.Controllers
 
         // POST: Beer/Update/3
         [HttpPost]
-        public ActionResult Update(int id, BeerDto beer)
+        public ActionResult Update(int id, Beer beer, HttpPostedFileBase BeerPic)
         {
-            string url = "updatebeer/" + id;
+            string url = "beerdata/updatebeer/" + id;
             string jsonpayload = jss.Serialize(beer);
             HttpContent content = new StringContent(jsonpayload);
             content.Headers.ContentType.MediaType = "application/json";
             HttpResponseMessage response = client.PostAsync(url, content).Result;
             Debug.WriteLine(content);
-            if (response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode && BeerPic != null)
             {
+                //Updaying the beer picture as a separate request
+                Debug.WriteLine("Calling Update Image method.");
+                //Send over image data 
+                url = "BeerData/UploadBeerPic/" + id;
+                Debug.WriteLine("Recieved beer picture " + BeerPic.FileName);
+
+                MultipartFormDataContent requestcontent = new MultipartFormDataContent();
+                HttpContent imagecontent = new StreamContent(BeerPic.InputStream);
+                requestcontent.Add(imagecontent, "BeerPic", BeerPic.FileName);
+                response = client.PostAsync(url, requestcontent).Result;
+
+                return RedirectToAction("List");
+            }
+            else if (response.IsSuccessStatusCode)
+            {
+                //no img upload but update still works
                 return RedirectToAction("List");
             }
             else
@@ -221,7 +261,7 @@ namespace TorontoBeerDirectory.Controllers
         // GET: Beer/Delete/3
         public ActionResult DeleteConfirm(int id)
         {
-            string url = "findbeer/" + id;
+            string url = "beerdata/findbeer/" + id;
             HttpResponseMessage response = client.GetAsync(url).Result;
             BeerDto selectedbeer = response.Content.ReadAsAsync<BeerDto>().Result;
             
@@ -243,7 +283,7 @@ namespace TorontoBeerDirectory.Controllers
         [HttpPost]
         public ActionResult Delete(int id)
         {
-            string url = "deletebeer/" + id;
+            string url = "beerdata/deletebeer/" + id;
             HttpContent content = new StringContent("");
             content.Headers.ContentType.MediaType = "application/json";
             HttpResponseMessage response = client.PostAsync(url, content).Result;

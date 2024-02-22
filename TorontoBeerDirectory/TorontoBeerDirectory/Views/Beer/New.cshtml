@@ -1,4 +1,4 @@
-﻿
+﻿@model IEnumerable<TorontoBeerDirectory.Models.BreweryDto>
 @{
     ViewBag.Title = "New";
 }
@@ -18,7 +18,14 @@
         <label>Alcohol Content:</label><input type="text" name="BeerAlcoholContent" />
     </div>
     <div>
-        <label>BreweryID:</label><input type="number" name="BreweryID" />
+        <label>Brewery:</label>
+        <select name="BreweryID">
+            @foreach (var brewery in Model)
+            {
+                <option value="@brewery.BreweryID">@brewery.BreweryName</option>
+
+            }
+        </select>
     </div>
     <div>
         <input type="submit" value="Add Beer"/>
