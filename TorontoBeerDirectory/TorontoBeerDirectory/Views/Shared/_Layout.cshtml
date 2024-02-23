@@ -28,9 +28,19 @@
     </nav>
     <div class="container body-content">
         @RenderBody()
-        <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+                <li class="nav-item">
+                    <a class="nav-link px-2 text-body-secondary" href="/Home/index">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-2 text-body-secondary" href="/Brewery/list">Breweries</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-2 text-body-secondary" href="/Beer/list">Beers</a>
+                </li>
+            </ul>
+            <p class="text-center text-body-secondary">&copy; 2024 Erko Abdurahman</p>
         </footer>
     </div>
 

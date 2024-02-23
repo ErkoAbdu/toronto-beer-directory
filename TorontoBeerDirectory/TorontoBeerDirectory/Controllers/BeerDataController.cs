@@ -160,7 +160,7 @@ namespace TorontoBeerDirectory.Controllers
             }
             
             db.Entry(beer).State = EntityState.Modified;
-            //Pic update is handled by method UploadBreweryPic()
+            //Pic update is handled by method UploadBeerPic()
             db.Entry(beer).Property(b => b.BeerHasPic).IsModified = false;
             db.Entry(beer).Property(b => b.PicExtension).IsModified = false;
             
@@ -237,13 +237,13 @@ namespace TorontoBeerDirectory.Controllers
                                 //if everything is successful then we can set the following fields
                                 haspic = true;
                                 picextension = extension;
-
                                 //Update the beer haspic and picextension fields in the database
                                 Beer SelectedBeer = db.Beers.Find(id);
                                 SelectedBeer.BeerHasPic = haspic;
                                 SelectedBeer.PicExtension = extension;
                                 db.Entry(SelectedBeer).State = EntityState.Modified;
-
+                                Debug.WriteLine(SelectedBeer.BeerHasPic);
+                                Debug.WriteLine(SelectedBeer.PicExtension);
                                 db.SaveChanges();
 
                             }
