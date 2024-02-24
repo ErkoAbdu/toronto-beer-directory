@@ -15,10 +15,10 @@
         <label for="BreweryLocation" class="form-label">Location:</label>
         <input type="text" class="form-control" name="BreweryLocation" value="@Model.BreweryLocation">
     </div>
-    <button type="submit" class="btn btn-primary">Update</button>
+    <div class="mb-3">
+        <label for="BreweryPic" class="form-label">Brewery Picture:</label>
+        <input type="file" class="form-control" name="BreweryPic">
+    </div>
+    <button type="submit" class="btn btn-primary" value="Update">Update</button>
     <a href="/Brewery/Details/@Model.BreweryID" class="btn btn-warning">Cancel</a>
 </form>
-
-
-
-
