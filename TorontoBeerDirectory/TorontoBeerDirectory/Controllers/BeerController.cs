@@ -44,7 +44,7 @@ namespace TorontoBeerDirectory.Controllers
             //Debug.WriteLine("The response code is: ");
             //Debug.WriteLine(response.StatusCode);
 
-            IEnumerable<BeerDto> beers = response.Content.ReadAsAsync<IEnumerable<BeerDto>>().Result;
+            IEnumerable<Beer> beers = response.Content.ReadAsAsync<IEnumerable<Beer>>().Result;
 
             //Debug.WriteLine("Number of beers received: ");
             //Debug.WriteLine(beers.Count());
@@ -77,7 +77,7 @@ namespace TorontoBeerDirectory.Controllers
             //Debug.WriteLine("The response code is: ");
             //Debug.WriteLine(response.StatusCode);
 
-            BeerDto SelectedBeer = response.Content.ReadAsAsync<BeerDto>().Result;
+            Beer SelectedBeer = response.Content.ReadAsAsync<Beer>().Result;
 
             ViewModel.SelectedBeer = SelectedBeer;
             //Debug.WriteLine("Beer recieved: ");
@@ -185,7 +185,7 @@ namespace TorontoBeerDirectory.Controllers
             //the existing beer info
             string url = "beerdata/findbeer/" + id;
             HttpResponseMessage response = client.GetAsync(url).Result;
-            BeerDto SelectedBeer = response.Content.ReadAsAsync<BeerDto>().Result;
+            Beer SelectedBeer = response.Content.ReadAsAsync<Beer>().Result;
             ViewModel.SelectedBeer = SelectedBeer;
 
             //Need to include all breweries available when updating the beer

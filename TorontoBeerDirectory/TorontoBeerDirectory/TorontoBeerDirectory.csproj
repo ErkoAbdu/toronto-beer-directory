@@ -223,6 +223,18 @@
     <Compile Include="Migrations\202402220113297_haspicbeer.designer.cs">
       <DependentUpon>202402220113297_haspicbeer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202402230446112_beerhaspicattempt.cs" />
+    <Compile Include="Migrations\202402230446112_beerhaspicattempt.designer.cs">
+      <DependentUpon>202402230446112_beerhaspicattempt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202402230447480_beerhaspicfixed.cs" />
+    <Compile Include="Migrations\202402230447480_beerhaspicfixed.designer.cs">
+      <DependentUpon>202402230447480_beerhaspicfixed.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202402232114212_relatedbeerschange.cs" />
+    <Compile Include="Migrations\202402232114212_relatedbeerschange.designer.cs">
+      <DependentUpon>202402232114212_relatedbeerschange.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Beer.cs" />
@@ -376,6 +388,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202402220113297_haspicbeer.resx">
       <DependentUpon>202402220113297_haspicbeer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202402230446112_beerhaspicattempt.resx">
+      <DependentUpon>202402230446112_beerhaspicattempt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202402230447480_beerhaspicfixed.resx">
+      <DependentUpon>202402230447480_beerhaspicfixed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202402232114212_relatedbeerschange.resx">
+      <DependentUpon>202402232114212_relatedbeerschange.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -121,3 +121,6 @@ C:\Users\erkoa\Desktop\http5226\toronto-beer-directory\TorontoBeerDirectory\Toro
 C:\Users\erkoa\Desktop\http5226\toronto-beer-directory\TorontoBeerDirectory\TorontoBeerDirectory\obj\Debug\TorontoBeerDirectory.Migrations.beeralcoholcontent.resources
 C:\Users\erkoa\Desktop\http5226\toronto-beer-directory\TorontoBeerDirectory\TorontoBeerDirectory\obj\Debug\TorontoBeerDirectory.Migrations.haspicbrewery.resources
 C:\Users\erkoa\Desktop\http5226\toronto-beer-directory\TorontoBeerDirectory\TorontoBeerDirectory\obj\Debug\TorontoBeerDirectory.Migrations.haspicbeer.resources
+C:\Users\erkoa\Desktop\http5226\toronto-beer-directory\TorontoBeerDirectory\TorontoBeerDirectory\obj\Debug\TorontoBeerDirectory.Migrations.beerhaspicattempt.resources
+C:\Users\erkoa\Desktop\http5226\toronto-beer-directory\TorontoBeerDirectory\TorontoBeerDirectory\obj\Debug\TorontoBeerDirectory.Migrations.beerhaspicfixed.resources
+C:\Users\erkoa\Desktop\http5226\toronto-beer-directory\TorontoBeerDirectory\TorontoBeerDirectory\obj\Debug\TorontoBeerDirectory.Migrations.relatedbeerschange.resources

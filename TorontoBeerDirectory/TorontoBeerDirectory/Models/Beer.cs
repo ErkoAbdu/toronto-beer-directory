@@ -17,6 +17,8 @@ namespace TorontoBeerDirectory.Models
         public string BeerAlcoholContent { get; set; }
         public bool BeerHasPic { get; set; }
         public string PicExtension { get; set; }
+        public string BreweryName { get; set; }
+
 
         //A beer belongs to one brewery
         //A brewery can have multiple beers

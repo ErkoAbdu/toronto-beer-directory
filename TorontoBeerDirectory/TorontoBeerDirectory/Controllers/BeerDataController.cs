@@ -34,12 +34,13 @@ namespace TorontoBeerDirectory.Controllers
         // GET: api/BeerData/ListBeers
         [HttpGet]
         //[ResponseType(typeof(BreweryDto))]
-        public IEnumerable<BeerDto> ListBeers()
+        public IEnumerable<Beer> ListBeers()
         {
             List<Beer> Beers = db.Beers.ToList();
-            List<BeerDto> BeerDtos = new List<BeerDto>();
+            //Changed all dto content to allow me to display images
+            List<Beer> BeerDtos = new List<Beer>();
 
-            Beers.ForEach(b => BeerDtos.Add(new BeerDto()
+            Beers.ForEach(b => BeerDtos.Add(new Beer()
             {
                 BeerID = b.BeerID,
                 BeerName = b.BeerName,
@@ -50,7 +51,7 @@ namespace TorontoBeerDirectory.Controllers
                 BreweryID = b.Brewery.BreweryID
             }));
 
-            return BeerDtos;
+            return Beers;
         }
 
         /// <summary>
@@ -126,7 +127,7 @@ namespace TorontoBeerDirectory.Controllers
                 return NotFound();
             }
 
-            return Ok(BeerDto);
+            return Ok(Beer);
         }
 
         /// <summary>
